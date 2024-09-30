@@ -1,0 +1,36 @@
+app:
+  host-url: http://localhost:8080
+
+spring:
+  init:
+    mode: never
+
+  datasource:
+    driverClassName: org.h2.Driver
+    url: jdbc:h2:mem:test;
+    username: sa
+    password:
+    h2:
+      console:
+        enabled: true
+  jpa:
+    hibernate.ddl-auto: create
+    generate-ddl: true
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+
+  feign:
+    client:
+      config:
+        default:
+          connectTimeout: 5000
+          readTimeout: 5000
+          loggerLevel: full
+
+logging:
+  level:
+    root: WARN
+    com.example.restfulapi: DEBUG
+    org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver: DEBUG
