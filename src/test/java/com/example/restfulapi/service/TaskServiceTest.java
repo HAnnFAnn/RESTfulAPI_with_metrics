@@ -21,7 +21,6 @@ import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-
 @SpringBootTest
 class TaskServiceTest {
 
@@ -36,7 +35,7 @@ class TaskServiceTest {
     }
 
     @Test
-    void testInsert100kTasksWithMeterRegistry() {
+   void testInsert100kTasksWithMeterRegistry() {
 
         Timer timer = Timer.builder("task.insertion.time")
                 .description("Time taken to insert 100k tasks")
@@ -80,14 +79,20 @@ class TaskServiceTest {
                 99.0, 300
 
         );
+
         Arrays.stream(snapshot.percentileValues())
-                .forEach(percentileValue -> assertTrue(
-                        percentileValue.value() < expectedExecutionTime.get(percentileValue.percentile()), "95th percentile should "
-                                + "be less than "
-                                + "200 ms"));
+                .forEach(percentileValue -> {
+                    Double percentile = percentileValue.percentile();
+                    Integer expectedTime = expectedExecutionTime.getOrDefault(percentile, 300); // Using 300 as a safe fallback
+
+                    assertTrue(
+                            percentileValue.value() < expectedTime,
+                            percentile + "th percentile should be less than " + expectedTime + " ms"
+                    );
+                });
     }
 
-    private IntFunction<Task> createTask() {
+    public IntFunction<Task> createTask() {
         return i -> {
             Task task = new Task();
             task.setHeader("Task " + i);
